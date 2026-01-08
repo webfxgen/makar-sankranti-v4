@@ -87,7 +87,8 @@
             transform: translateX(-50%) rotate(-2deg); /* Casual tilt */
             display: none; 
             opacity: 0;
-            max-height: calc(100vh - 180px);
+            /* Adjusted max-height to prevent overlap with bottom buttons */
+            max-height: calc(100vh - 200px);
             overflow-y: auto;
             scrollbar-width: none;
             transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -303,10 +304,21 @@
 
         /* Mobile */
         @media (max-width: 600px) {
-            .card { width: 90%; top: 80px; padding: 2rem 1.5rem; }
+            .card { 
+                width: 90%; 
+                top: 80px; 
+                padding: 1.5rem 1rem; 
+                /* Increased safety margin to prevent overlap with bottom buttons */
+                max-height: calc(100vh - 230px); 
+            }
             .btn { padding: 10px 20px; font-size: 0.9rem; }
             .action-buttons { flex-direction: row; bottom: 80px; }
-            .wish-text { font-size: 2.5rem; }
+            
+            /* Adjusted font sizes for better fit */
+            h1 { font-size: 1.8rem; margin-bottom: 0.5rem; }
+            .wish-text { font-size: 2.2rem; margin: 0.8rem 0; }
+            .sub-text { font-size: 1.1rem; margin-bottom: 1rem; }
+            input[type="text"] { font-size: 1rem; padding: 10px; margin-bottom: 1rem; }
         }
     </style>
 </head>
@@ -628,7 +640,9 @@
                         text: text,
                         url: shareUrl
                     });
-                } catch (err) { console.log(err); }
+                } catch (err) {
+                    console.log('Share failed:', err);
+                }
             } else {
                 copyToClipboard(`${text}\n${shareUrl}`);
             }
