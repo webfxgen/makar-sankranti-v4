@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Makar Sankranti</title>
+    
+    <!-- Link Preview Meta Tags -->
+    <meta property="og:title" content="🪁 A Handmade Paper Wish for You!">
+    <meta property="og:description" content="I've crafted a special Makar Sankranti surprise just for you. Tap to unfold it! ✂️✨">
+    <meta property="og:image" content="https://images.unsplash.com/photo-1516961642265-531546e84af2?q=80&w=1200&auto=format&fit=crop">
+    <meta property="og:type" content="website">
+
+    <!-- Fonts: Fredoka One (Chunky), Patrick Hand (Handwriting) -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Patrick+Hand&display=swap" rel="stylesheet">
+    <!-- FontAwesome CSS (Replaced JS Kit to prevent script errors) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            /* Paper Craft Palette */
+            --sky-blue: #4facfe;
+            --paper-white: #fdfbf7;
+            --paper-shadow: rgba(0, 0, 0, 0.15);
+            --ink-color: #2d3436;
+            --tape-color: #ffeba7;
+            --btn-color: #ff7675;
+            --btn-shadow: #d63031;
+            --accent-yellow: #ffeaa7;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Patrick Hand', cursive;
+            overflow: hidden;
+            background-color: var(--sky-blue);
+            background-image: linear-gradient(to bottom, #4facfe 0%, #00f2fe 100%);
+            height: 100vh;
+            color: var(--ink-color);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            position: relative;
+        }
+
+        /* --- Background Animation Canvas --- */
+        #skyCanvas {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 0;
+        }
+
+        /* --- Paper Texture Overlay --- */
+        .texture-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url("https://www.transparenttextures.com/patterns/cream-paper.png");
+            opacity: 0.4;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* --- Main Container --- */
+        .container {
+            position: relative;
+            z-index: 10;
+            width: 90%;
+            max-width: 480px;
+            height: 100%;
+            perspective: 1000px;
+        }
+
+        /* --- Paper Card Styles --- */
+        .card {
+            background: var(--paper-white);
+            border-radius: 5px;
+            padding: 2.5rem 2rem;
+            text-align: center;
+            /* Paper shadow effect */
+            box-shadow: 
+                1px 1px 0 rgba(0,0,0,0.1),
+                5px 5px 15px rgba(0,0,0,0.15);
+            position: absolute;
+            width: 100%;
+            top: 70px; 
+            left: 50%;
+            transform: translateX(-50%) rotate(-2deg); /* Casual tilt */
+            display: none; 
+            opacity: 0;
+            max-height: calc(100vh - 180px);
+            overflow-y: auto;
+            scrollbar-width: none;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        .card:hover {
+            transform: translateX(-50%) rotate(0deg) scale(1.02);
+        }
+
+        /* Washi Tape Effect */
+        .card::before {
+            content: '';
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 30px;
+            background-color: var(--tape-color);
+            opacity: 0.8;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+            transform: translateX(-50%) rotate(1deg);
+        }
+
+        .card::-webkit-scrollbar { display: none; }
+
+        .card.active {
+            display: block;
+            opacity: 1;
+            animation: paperUnfold 0.6s ease-out forwards;
+        }
+
+        @keyframes paperUnfold {
+            0% { transform: translateX(-50%) scale(0.5) rotate(-10deg); opacity: 0; }
+            100% { transform: translateX(-50%) scale(1) rotate(-2deg); opacity: 1; }
+        }
+
+        /* --- Typography --- */
+        h1 {
+            font-family: 'Fredoka One', cursive;
+            font-size: 2.2rem;
+            margin-bottom: 1rem;
+            color: #6c5ce7;
+            letter-spacing: 1px;
+            text-shadow: 2px 2px 0px #a29bfe;
+        }
+
+        .wish-text {
+            font-family: 'Fredoka One', cursive;
+            font-size: 3rem;
+            margin: 1rem 0;
+            color: #ff7675;
+            text-shadow: 3px 3px 0px #fab1a0;
+            transform: rotate(-3deg);
+            line-height: 1.1;
+        }
+
+        .sub-text {
+            font-size: 1.3rem;
+            margin-bottom: 1.5rem;
+            color: #636e72;
+            line-height: 1.4;
+        }
+
+        /* --- Inputs --- */
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            background: #fff;
+            border: 3px dashed #b2bec3;
+            border-radius: 10px;
+            color: var(--ink-color);
+            font-family: 'Fredoka One', cursive;
+            font-size: 1.2rem;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        input[type="text"]:focus {
+            border-color: #6c5ce7;
+            background: #fdfdfd;
+            transform: scale(1.02);
+        }
+
+        /* --- Chunky Buttons --- */
+        .btn {
+            background-color: var(--btn-color);
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 15px;
+            font-family: 'Fredoka One', cursive;
+            font-size: 1.1rem;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin: 8px;
+            /* 3D Button Effect */
+            box-shadow: 0 6px 0 var(--btn-shadow), 0 10px 10px rgba(0,0,0,0.2);
+            transition: all 0.1s;
+            position: relative;
+            top: 0;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 0 var(--btn-shadow), 0 12px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 var(--btn-shadow), 0 4px 5px rgba(0,0,0,0.2);
+            top: 4px;
+        }
+
+        .btn-secondary {
+            background-color: #00b894;
+            --btn-shadow: #00876c;
+        }
+
+        /* Razorpay Button Paper Style Override */
+        .razorpay-payment-button {
+            background-color: #fdcb6e !important;
+            color: #d35400 !important;
+            border: none !important;
+            border-radius: 15px !important; 
+            padding: 10px 25px !important;
+            font-family: 'Fredoka One', cursive !important;
+            font-size: 1rem !important;
+            box-shadow: 0 6px 0 #e1b12c, 0 10px 10px rgba(0,0,0,0.1) !important;
+            transition: all 0.1s !important;
+            display: inline-flex !important;
+            align-items: center;
+            justify-content: center;
+            min-height: 45px;
+        }
+        .razorpay-payment-button:active {
+            transform: translateY(4px) !important;
+            box-shadow: 0 2px 0 #e1b12c, 0 4px 5px rgba(0,0,0,0.1) !important;
+        }
+
+        /* --- Signature --- */
+        .signature {
+            margin-top: 1.5rem;
+            font-size: 1.2rem;
+            padding-top: 1rem;
+            border-top: 2px dotted #dfe6e9;
+            color: #636e72;
+        }
+
+        .name-highlight {
+            color: #0984e3;
+            font-weight: 700;
+            text-decoration: underline;
+            text-decoration-style: wavy;
+            text-decoration-color: #74b9ff;
+        }
+
+        /* --- Footer & Actions --- */
+        .footer-left {
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 999;
+        }
+        
+        .footer-right {
+            position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 999;
+            background: #fff;
+            padding: 8px 15px;
+            border-radius: 20px;
+            box-shadow: 0 4px 0 #dfe6e9;
+            font-family: 'Fredoka One', cursive;
+            transform: translateX(-50%) rotate(2deg);
+        }
+        .footer-right p { margin: 0; font-size: 0.9rem; color: #2d3436; }
+        .footer-right a { color: #e17055; text-decoration: none; }
+
+        .action-buttons {
+            position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%); z-index: 90;
+            display: none; gap: 15px; width: 100%; justify-content: center;
+        }
+        .action-buttons.visible { display: flex; }
+
+        /* --- Loading Overlay --- */
+        .overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #ffeaa7;
+            z-index: 100;
+            display: flex; justify-content: center; align-items: center; flex-direction: column;
+            opacity: 0; pointer-events: none; transition: opacity 0.5s;
+        }
+        .overlay.visible { opacity: 1; pointer-events: all; }
+
+        .scissor-icon {
+            font-size: 3rem;
+            color: #ff7675;
+            animation: cut 0.5s infinite alternate;
+        }
+        @keyframes cut { from { transform: rotate(0deg); } to { transform: rotate(20deg); } }
+
+        /* --- Toast --- */
+        #toast {
+            visibility: hidden; min-width: 250px; margin-left: -125px;
+            background-color: #fff; border: 3px solid #00b894;
+            color: #00b894; text-align: center; border-radius: 15px;
+            padding: 16px; position: fixed; z-index: 1000; left: 50%; bottom: 30px;
+            font-family: 'Fredoka One', cursive;
+            font-size: 1.1rem; box-shadow: 0 5px 0 #b2bec3;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            transition: opacity 0.3s, bottom 0.3s;
+        }
+        #toast.show { visibility: visible; opacity: 1; bottom: 160px; }
+
+        /* Mobile */
+        @media (max-width: 600px) {
+            .card { width: 90%; top: 80px; padding: 2rem 1.5rem; }
+            .btn { padding: 10px 20px; font-size: 0.9rem; }
+            .action-buttons { flex-direction: row; bottom: 80px; }
+            .wish-text { font-size: 2.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="skyCanvas"></canvas>
+    <div class="texture-overlay"></div>
+
+    <!-- Loading -->
+    <div class="overlay" id="loadingOverlay">
+        <div class="scissor-icon"><i class="fas fa-cut"></i></div>
+        <h3 style="font-family: 'Fredoka One'; color: #d63031; margin-top: 10px;">Crafting...</h3>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast">
+        <i class="fas fa-check"></i>
+        <span id="toastMsg">Copied!</span>
+    </div>
+
+    <!-- Credits Top -->
+    <div class="footer-right">
+        <p>Made by <a href="https://www.webfxgen.in/" target="_blank">WebFxGen</a></p>
+    </div>
+
+    <div class="container" id="cardContainer">
+        <!-- Input Page -->
+        <div class="card active" id="inputPage">
+            <h1>Create Wish</h1>
+            <p class="sub-text">Write your name to craft a paper kite!</p>
+            <input type="text" id="userNameInput" placeholder="Your Name..." autocomplete="off">
+            <button class="btn" onclick="generateWish()">Fold & Fly</button>
+        </div>
+
+        <!-- Wish Page -->
+        <div class="card" id="wishPage">
+            <h2 style="font-size: 1rem; color: #b2bec3; text-transform: uppercase;">A Gift For You</h2>
+            <div class="wish-text">Makar Sankranti</div>
+            <p class="sub-text">
+                "Sending you a sky full of kites and a heart full of joy! Let your dreams fly high."
+                <br><br><strong style="color: #00b894;">Til-Gul Ghya, God God Bola!</strong>
+            </p>
+            
+            <div class="signature">
+                Best Wishes,<br>
+                <span class="name-highlight" id="displaySenderName">User</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="action-buttons" id="actionButtons">
+        <button class="btn" onclick="shareWish()">Send Kite</button>
+        <button class="btn btn-secondary" onclick="resetApp()">Make New</button>
+    </div>
+
+    <!-- Support Bottom -->
+    <div class="footer-left">
+        <form>
+            <script src="https://checkout.razorpay.com/v1/payment-button.js" data-payment_button_id="pl_S0CCnxIwut7hNL" async> </script> 
+        </form>
+    </div>
+
+    <script>
+        // --- Configuration ---
+        const canvas = document.getElementById('skyCanvas');
+        const ctx = canvas.getContext('2d');
+        let width, height;
+        let elements = []; // Kites and Clouds
+        
+        // Paper Colors
+        const colors = ['#ff7675', '#fab1a0', '#ffeaa7', '#55efc4', '#74b9ff', '#a29bfe'];
+        
+        let mouseX = 0;
+        let mouseY = 0;
+
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+
+        // --- Paper Cloud Class (Parallax Background) ---
+        class Cloud {
+            constructor() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.size = Math.random() * 50 + 30;
+                this.speed = Math.random() * 0.5 + 0.2;
+                this.depth = Math.random(); // 0 to 1
+            }
+
+            update() {
+                // Parallax movement based on mouse
+                const moveX = (mouseX - width/2) * this.depth * 0.05;
+                const moveY = (mouseY - height/2) * this.depth * 0.05;
+                
+                this.x += this.speed;
+                if (this.x > width + 100) this.x = -100;
+
+                this.drawX = this.x - moveX;
+                this.drawY = this.y - moveY;
+            }
+
+            draw() {
+                ctx.save();
+                ctx.translate(this.drawX, this.drawY);
+                ctx.fillStyle = '#ffffff';
+                ctx.shadowColor = 'rgba(0,0,0,0.05)';
+                ctx.shadowBlur = 5;
+                ctx.shadowOffsetY = 5;
+                
+                // Draw fluffy cloud using circles
+                ctx.beginPath();
+                ctx.arc(0, 0, this.size, 0, Math.PI * 2);
+                ctx.arc(this.size * 0.8, -this.size * 0.2, this.size * 0.7, 0, Math.PI * 2);
+                ctx.arc(-this.size * 0.8, -this.size * 0.2, this.size * 0.7, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        // --- Paper Kite Class ---
+        class Kite {
+            constructor(isConfetti = false) {
+                this.init(isConfetti);
+            }
+
+            init(isConfetti) {
+                this.x = Math.random() * width;
+                this.y = isConfetti ? height / 2 : height + 100;
+                
+                // Kites are diamonds, Confetti are small rectangles
+                this.isConfetti = isConfetti;
+                this.size = isConfetti ? Math.random() * 8 + 4 : Math.random() * 20 + 20;
+                this.color = colors[Math.floor(Math.random() * colors.length)];
+                
+                // Physics
+                this.vx = (Math.random() - 0.5) * 2;
+                this.vy = isConfetti ? -(Math.random() * 10 + 5) : -(Math.random() * 2 + 1);
+                this.rotation = Math.random() * Math.PI * 2;
+                this.rotationSpeed = (Math.random() - 0.5) * 0.1;
+                this.drag = isConfetti ? 0.96 : 1; 
+                this.gravity = isConfetti ? 0.2 : 0;
+            }
+
+            update() {
+                // Interactive Wind Force from Mouse
+                const dx = this.x - mouseX;
+                const dy = this.y - mouseY;
+                const dist = Math.sqrt(dx*dx + dy*dy);
+                const windRadius = 200;
+
+                if (dist < windRadius) {
+                    const force = (windRadius - dist) / windRadius;
+                    const angle = Math.atan2(dy, dx);
+                    this.vx += Math.cos(angle) * force * 0.5; // Push
+                    this.vy += Math.sin(angle) * force * 0.5;
+                }
+
+                // Move
+                this.x += this.vx;
+                this.y += this.vy;
+                this.rotation += this.rotationSpeed;
+
+                // Physics updates
+                this.vx *= this.drag;
+                this.vy *= this.drag;
+                this.vy += this.gravity; // Gravity for confetti
+
+                // Reset logic for background kites
+                if (!this.isConfetti && this.y < -100) {
+                    this.y = height + 100;
+                    this.x = Math.random() * width;
+                    this.vy = -(Math.random() * 2 + 1);
+                }
+            }
+
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.rotation);
+                
+                ctx.fillStyle = this.color;
+                // Paper shadow for depth
+                ctx.shadowColor = 'rgba(0,0,0,0.2)';
+                ctx.shadowBlur = 5;
+                ctx.shadowOffsetY = 5;
+
+                if (this.isConfetti) {
+                    ctx.fillRect(-this.size/2, -this.size/2, this.size, this.size);
+                } else {
+                    // Draw Kite Shape
+                    ctx.beginPath();
+                    ctx.moveTo(0, -this.size);
+                    ctx.lineTo(this.size * 0.8, 0);
+                    ctx.lineTo(0, this.size);
+                    ctx.lineTo(-this.size * 0.8, 0);
+                    ctx.closePath();
+                    ctx.fill();
+                    
+                    // Center fold line
+                    ctx.strokeStyle = 'rgba(0,0,0,0.1)';
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.moveTo(0, -this.size);
+                    ctx.lineTo(0, this.size);
+                    ctx.stroke();
+
+                    // String
+                    ctx.shadowColor = 'transparent';
+                    ctx.strokeStyle = '#fff';
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    ctx.moveTo(0, this.size);
+                    // Wiggly string
+                    ctx.quadraticCurveTo(5, this.size + 10, 0, this.size + 20);
+                    ctx.stroke();
+                }
+                ctx.restore();
+            }
+        }
+
+        // --- Init ---
+        function initElements() {
+            elements = [];
+            // Add Clouds
+            for(let i=0; i<10; i++) elements.push(new Cloud());
+            // Add Kites
+            for(let i=0; i<25; i++) elements.push(new Kite(false));
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, width, height);
+            
+            // Draw all elements
+            // Filter out confetti that fell off screen
+            elements = elements.filter(e => !(e.isConfetti && e.y > height + 100));
+            
+            elements.forEach(el => {
+                el.update();
+                el.draw();
+            });
+            requestAnimationFrame(animate);
+        }
+
+        initElements();
+        animate();
+
+        // --- App Logic ---
+        
+        function generateWish() {
+            const inputName = document.getElementById('userNameInput').value.trim();
+            if (!inputName) {
+                showToast("Please write a name!", true);
+                return;
+            }
+
+            const overlay = document.getElementById('loadingOverlay');
+            overlay.classList.add('visible');
+
+            document.getElementById('inputPage').classList.remove('active');
+
+            // Add Confetti Burst
+            for(let i=0; i<100; i++) {
+                elements.push(new Kite(true));
+            }
+
+            setTimeout(() => {
+                overlay.classList.remove('visible');
+                document.getElementById('displaySenderName').innerText = inputName;
+                const wishPage = document.getElementById('wishPage');
+                wishPage.style.display = 'block'; 
+                document.getElementById('actionButtons').classList.add('visible');
+                void wishPage.offsetWidth; 
+                wishPage.classList.add('active');
+            }, 1500); 
+        }
+
+        function resetApp() {
+            try {
+               const newUrl = window.location.href.split('?')[0];
+               window.history.pushState({}, document.title, newUrl);
+            } catch (e) {
+                // Ignore history errors in sandboxed iframes
+            }
+
+            document.getElementById('wishPage').classList.remove('active');
+            document.getElementById('actionButtons').classList.remove('visible');
+
+            setTimeout(() => {
+                document.getElementById('wishPage').style.display = 'none';
+                document.getElementById('inputPage').style.display = 'block'; 
+                requestAnimationFrame(() => {
+                    document.getElementById('inputPage').classList.add('active');
+                });
+                document.getElementById('userNameInput').value = '';
+                // Clear confetti, keep clouds/kites
+                initElements();
+            }, 500);
+        }
+
+        async function shareWish() {
+            const name = document.getElementById('displaySenderName').innerText;
+            const baseUrl = window.location.href.split('?')[0];
+            const shareUrl = `${baseUrl}?n=${encodeURIComponent(name)}`;
+            const text = `🪁 *You have a Handmade Wish!* ✂️\n\n${name} crafted a special paper greeting for Makar Sankranti just for you.\n\nUnfold it here: 👇`;
+
+            if (navigator.share) {
+                try {
+                    await navigator.share({
+                        title: '✂️ Handmade Makar Sankranti Wish',
+                        text: text,
+                        url: shareUrl
+                    });
+                } catch (err) { console.log(err); }
+            } else {
+                copyToClipboard(`${text}\n${shareUrl}`);
+            }
+        }
+
+        function copyToClipboard(text) {
+            const tempInput = document.createElement("textarea");
+            tempInput.value = text;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand("copy");
+            document.body.removeChild(tempInput);
+            showToast("Copied to clipboard!");
+        }
+
+        function showToast(message, isError = false) {
+            const toast = document.getElementById("toast");
+            const toastMsg = document.getElementById("toastMsg");
+            toastMsg.innerText = message;
+            
+            if(isError) {
+                toast.style.borderColor = "#ff7675";
+                toast.style.color = "#ff7675";
+                toast.querySelector('i').className = "fas fa-exclamation";
+            } else {
+                toast.style.borderColor = "#00b894";
+                toast.style.color = "#00b894";
+                toast.querySelector('i').className = "fas fa-check";
+            }
+
+            toast.className = "show";
+            setTimeout(() => { toast.className = ""; }, 3000);
+        }
+
+        // Shared Link Logic
+        window.addEventListener('load', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const sharedName = urlParams.get('n');
+
+            if (sharedName) {
+                const decodedName = decodeURIComponent(sharedName);
+                document.getElementById('inputPage').classList.remove('active');
+                document.getElementById('displaySenderName').innerText = decodedName;
+                
+                const wishPage = document.getElementById('wishPage');
+                wishPage.style.display = 'block';
+                document.getElementById('actionButtons').classList.add('visible');
+
+                setTimeout(() => {
+                    wishPage.classList.add('active');
+                    // Explosion
+                    for(let i=0; i<60; i++) elements.push(new Kite(true));
+                }, 100);
+            }
+        });
+    </script>
+</body>
+</html>
